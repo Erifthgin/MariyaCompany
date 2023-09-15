@@ -1,0 +1,150 @@
+<!-- Сорри что всё в одной html -->
+<!-- Toolbar -->
+<ul class="nav justify-content-center">
+  <li class="nav-item" (click)="openContent('#mainContent')">
+    <a class="nav-link active" aria-current="page" href="#">Главная страница</a>
+  </li>
+  <li class="nav-item" (click)="openContent('#employeesContent')">
+    <a class="nav-link" href="#">Страница сотрудников</a>
+  </li>
+</ul>
+
+<div class="content" id="mainContent" style="text-align:center">
+  Добрый вечер
+  <br><br>
+  Тут должна быть какая-то информация
+  <br><br>
+  Но её не будет
+  <br><br>
+  Поэтому ловите гифку котека
+  <br><br>
+  <img src="https://cataas.com/cat/gif" height="200px" width="200px" />
+</div>
+
+<div class="content" id="employeesContent" hidden>
+  <p *ngIf="emptyEmployee"><em>Сотрудники отсутствуют для просмотра и редактирования</em></p>
+  <div class="row" style="display: block; width: 100%;margin-bottom:20px" *ngIf="!emptyEmployee">
+    <label style="width:60px">Отдел</label>
+    <select style="width: 100px; padding: 0px;" ng-model='nrSelect' [(ngModel)]="filterEmpl.departmentId">
+      <option *ngFor="let p of departments" value='{{ p?.id}}'>{{ p?.name}}</option>
+    </select>
+    <label style="width:100px">Должность</label>
+    <select style="width: 100px; padding: 0px;" ng-model='nrSelect' [(ngModel)]="filterEmpl.companyPositionId">
+      <option *ngFor="let p of companyPositions" value='{{ p?.id}}'>{{ p?.name}}</option>
+    </select>
+    <input placeholder="Введите фамилию" style="width: 150px; margin-left: 10px " type="text" [(ngModel)]="filterEmpl.surname" />
+    <label style="width:70px">Возраст</label>
+    <input placeholder="от" style="width:50px" type="text" [(ngModel)]="filterEmpl.ageTo" />
+    <input placeholder="до" style="width:50px;margin-left:10px" type="text" [(ngModel)]="filterEmpl.ageFrom" />
+    <button style="margin: 0; float: right; width: 100px" class="btn btn-success" (click)="loadEmployees()">Показать</button>
+  </div>
+
+  <input type="button" value="Добавить сотрудника" class="btn btn-success" (click)="createOpenModal()" style="margin-left: auto; margin-right: 0;" />
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th class="headerText" *ngFor="let p of sortModel" [attr.width]="p.width" (click)="selectSort(p)">
+          {{p.name}} <img *ngIf="p.isActive" [attr.src]="p.isAsc ? 'assets/svg/caret-down-fill.svg' : 'assets/svg/caret-up-fill.svg'">
+        </th>
+        <th class="headerText" style="width:100px">Зарплата</th>
+        <th style="width:600px"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of employees">
+        <td>{{p?.departmentString}}</td>
+        <td>{{p?.firstName}} {{p?.middleName}} {{p?.lastName}}</td>
+        <td>{{p?.birthdayString}}</td>
+        <td>{{p?.employmentDateString}}</td>
+        <td>{{p?.companyPositionString}}</td>
+        <td>{{p?.companyPosition?.salary}}</td>
+        <td>
+          <button style="width:50%" class="btn btn-sm btn-warning" (click)="editEmployee(p)">Изменить</button>
+          <button style="width:50%" class="btn btn-sm btn-danger" (click)="delete(p)">Удалить</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<div id="overlay" hidden class="modal-backdrop fade show"></div>
+
+<!-- Modal -->
+<div class="modal" id="createModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Создание сотрудника</h5>
+        <button type="button" class="close" (click)="closemodal('#createModal')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label>Имя</label>
+        <input type="text" [(ngModel)]="employee.firstName" class="form-control" />
+        <label>Отчество</label>
+        <input type="text" [(ngModel)]="employee.middleName" class="form-control" />
+        <label>Фамилия</label>
+        <input type="text" [(ngModel)]="employee.lastName" class="form-control" />
+        <label>День рождения</label>
+        <input type="date" [(ngModel)]="employee.birthday" class="form-control" />
+        <label>Дата трудоустройства</label>
+        <input type="date" [(ngModel)]="employee.employmentDate" class="form-control" />
+        <label>Выберите отдел</label>
+        <select style="padding: 0px;" ng-model='nrSelect' class='form-control' [(ngModel)]="employee.departmentId">
+          <option *ngFor="let p of departments" value='{{ p?.id}}'>{{ p?.name}}</option>
+        </select>
+        <label>Выберите должность</label>
+        <select style="padding: 0px;" ng-model='nrSelect' class='form-control' [(ngModel)]="employee.companyPositionId">
+          <option *ngFor="let p of companyPositions" value='{{ p?.id}}'>{{ p?.name}}</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <div class="row" style="width: 100%">
+          <input style="width: 50%" type="button" value="Сохранить" (click)="createemployee()" class="btn btn-success" />
+          <input style="width: 50%" type="button" value="Отмена" (click)="closemodal('#createModal')" class="btn btn-danger" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="updateModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Редактирование сотрудника</h5>
+        <button type="button" class="close" (click)="closemodal('#updateModal')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label>Имя</label>
+        <input type="text" [(ngModel)]="employee.firstName" class="form-control" />
+        <label>Отчество</label>
+        <input type="text" [(ngModel)]="employee.middleName" class="form-control" />
+        <label>Фамилия</label>
+        <input type="text" [(ngModel)]="employee.lastName" class="form-control" />
+        <label>День рождения</label>
+        <input type="date" value="{{employee.birthday}}" [(ngModel)]="employee.birthday" class="form-control" />
+        <label>Дата трудоустройства</label>
+        <input type="date" value="{{employee.employmentDate}}" [(ngModel)]="employee.employmentDate" class="form-control" />
+        <label>Выберите отдел</label>
+        <select style="padding: 0px;" ng-model='nrSelect' class='form-control' [(ngModel)]="employee.departmentId">
+          <option *ngFor="let p of departments" value='{{ p?.id}}'>{{ p?.name}}</option>
+        </select>
+        <label>Выберите должность</label>
+        <select style="padding: 0px;" ng-model='nrSelect' class='form-control' [(ngModel)]="employee.companyPositionId">
+          <option *ngFor="let p of companyPositions" value='{{ p?.id}}'>{{ p?.name}}</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <div class="row" style="width: 100%">
+          <input style="width: 50%" type="button" value="Сохранить" (click)="update()" class="btn btn-sm btn-success" />
+          <input style="width: 50%" type="button" value="Отмена" (click)="closemodal('#updateModal')" class="btn btn-sm btn-danger" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
