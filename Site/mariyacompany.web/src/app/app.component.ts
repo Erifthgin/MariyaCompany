@@ -12,7 +12,7 @@ import { SortModel } from './models/sortmodel';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css', '../../dist/css/bootstrap.min.css'],
+  styleUrls: ['./app.component.css', '../../assets/css/bootstrap.min.css'],
   providers: [EmployeeService]
 })
 
