@@ -6,23 +6,27 @@ using MediatR;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
+using MariyaCompany.Application.Abstractions.Objects;
+using AutoMapper;
 
 namespace MariyaCompany.Application.Handlers
 {
-    public class GetDepartmentsHandler : IRequestHandler<GetDepartmentsRequest, Department[]>
+    public class GetDepartmentsHandler : IRequestHandler<GetDepartmentsRequest, DepartmentDetails[]>
     {
         private readonly IRepository<Department> _repositoryDepartment;
+        private readonly IMapper _mapper;
 
-        public GetDepartmentsHandler(IRepository<Department> repositoryDepartment)
+        public GetDepartmentsHandler(IRepository<Department> repositoryDepartment, IMapper mapper)
         {
             _repositoryDepartment = repositoryDepartment;
+            _mapper = mapper;
         }
 
-        public async Task<Department[]> Handle(GetDepartmentsRequest request, CancellationToken cancellationToken)
+        public async Task<DepartmentDetails[]> Handle(GetDepartmentsRequest request, CancellationToken cancellationToken)
         {
-            var employees = _repositoryDepartment.GetAll().ToArray();
+            var departments = _repositoryDepartment.GetAll().ToArray();
 
-            return employees;
+            return _mapper.Map<DepartmentDetails[]>(departments);
         }
     }
 }

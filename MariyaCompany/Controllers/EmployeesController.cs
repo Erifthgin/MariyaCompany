@@ -1,4 +1,4 @@
-﻿using MariyaCompany.Application.Abstractions.Entity;
+﻿using MariyaCompany.Application.Abstractions.Objects;
 using MariyaCompany.Application.Abstractions.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +19,7 @@ namespace MariyaCompany.Controllers
 
         [Route("")]
         [HttpGet]
-        public async Task<Employee[]> GetEmployees([FromQuery] GetEmployeesRequest request)
+        public async Task<EmployeeDetails[]> GetEmployees([FromQuery] GetEmployeesRequest request)
         {
             var result = await _mediatr.Send(request);
 
@@ -70,7 +70,7 @@ namespace MariyaCompany.Controllers
 
         [Route("departments")]
         [HttpGet]
-        public async Task<Department[]> GetDepartments()
+        public async Task<DepartmentDetails[]> GetDepartments()
         {
             var result = await _mediatr.Send(new GetDepartmentsRequest());
 
@@ -79,7 +79,7 @@ namespace MariyaCompany.Controllers
 
         [Route("companypositions")]
         [HttpGet]
-        public async Task<CompanyPosition[]> GetCompanyPositions()
+        public async Task<CompanyPositionDetails[]> GetCompanyPositions()
         {
             var result = await _mediatr.Send(new GetCompanyPositionsRequest());
 

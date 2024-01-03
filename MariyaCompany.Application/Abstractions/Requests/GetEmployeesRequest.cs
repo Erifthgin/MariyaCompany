@@ -1,9 +1,9 @@
-﻿using MariyaCompany.Application.Abstractions.Entity;
+﻿using MariyaCompany.Application.Abstractions.Objects;
 using MediatR;
 
 namespace MariyaCompany.Application.Abstractions.Requests
 {
-    public class GetEmployeesRequest : IRequest<Employee[]>
+    public class GetEmployeesRequest : IRequest<EmployeeDetails[]>
     {
         public string Surname { get; set; }
 

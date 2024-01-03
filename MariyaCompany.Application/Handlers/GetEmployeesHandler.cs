@@ -7,19 +7,23 @@ using MariyaCompany.Application.Abstractions.Entity;
 using System.Linq;
 using MariyaCompany.Application.Abstractions.Objects.Enums;
 using System;
+using MariyaCompany.Application.Abstractions.Objects;
+using AutoMapper;
 
 namespace MariyaCompany.Application.Handlers
 {
-    internal class GetEmployeesHandler : IRequestHandler<GetEmployeesRequest, Employee[]>
+    internal class GetEmployeesHandler : IRequestHandler<GetEmployeesRequest, EmployeeDetails[]>
     {
         private readonly IRepository<Employee> _repositoryEmployees;
+        private readonly IMapper _mapper;
 
-        public GetEmployeesHandler(IRepository<Employee> repositoryEmployees)
+        public GetEmployeesHandler(IRepository<Employee> repositoryEmployees, IMapper mapper)
         {
+            _mapper = mapper;
             _repositoryEmployees = repositoryEmployees;
         }
 
-        public async Task<Employee[]> Handle(GetEmployeesRequest request, CancellationToken cancellationToken)
+        public async Task<EmployeeDetails[]> Handle(GetEmployeesRequest request, CancellationToken cancellationToken)
         {
             var employees = _repositoryEmployees.GetAllWithSelectVirtual("CompanyPosition");
 
@@ -27,7 +31,7 @@ namespace MariyaCompany.Application.Handlers
 
             employees = Sort(employees, request.IsAsc, request.SortType);
 
-            return employees.ToArray();
+            return _mapper.Map<EmployeeDetails[]>(employees.ToArray());
         }
 
         /// <summary>

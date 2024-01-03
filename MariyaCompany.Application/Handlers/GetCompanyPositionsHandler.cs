@@ -5,23 +5,27 @@ using MediatR;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
+using MariyaCompany.Application.Abstractions.Objects;
+using AutoMapper;
 
 namespace MariyaCompany.Application.Handlers
 {
-    public class GetCompanyPositionsHandler : IRequestHandler<GetCompanyPositionsRequest, CompanyPosition[]>
+    public class GetCompanyPositionsHandler : IRequestHandler<GetCompanyPositionsRequest, CompanyPositionDetails[]>
     {
         private readonly IRepository<CompanyPosition> _repositoryCompanyPositions;
+        private readonly IMapper _mapper;
 
-        public GetCompanyPositionsHandler(IRepository<CompanyPosition> repositoryCompanyPositions)
+        public GetCompanyPositionsHandler(IRepository<CompanyPosition> repositoryCompanyPositions, IMapper mapper)
         {
             _repositoryCompanyPositions = repositoryCompanyPositions;
+            _mapper = mapper;
         }
 
-        public async Task<CompanyPosition[]> Handle(GetCompanyPositionsRequest request, CancellationToken cancellationToken)
+        public async Task<CompanyPositionDetails[]> Handle(GetCompanyPositionsRequest request, CancellationToken cancellationToken)
         {
-            var employees = _repositoryCompanyPositions.GetAll().ToArray();
+            var companies = _repositoryCompanyPositions.GetAll().ToArray();
 
-            return employees;
+            return _mapper.Map<CompanyPositionDetails[]>(companies);
         }
     }
 }
